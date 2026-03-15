@@ -115,17 +115,50 @@ fi
 if [ "$demo" = "csfle" ] || [ "$demo" = "all" ]; then
     print_step "Provisioning KMS KEK via Terraform..."
 
-    if [ ! -d "$TERRAFORM_DIR" ]; then
-        print_error "Terraform directory not found: $TERRAFORM_DIR"
-        exit 1
-    fi
+    # Configuration folders
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    TERRAFORM_DIR="$SCRIPT_DIR/terraform"
 
-    terraform -chdir="$TERRAFORM_DIR" init -input=false
-    terraform -chdir="$TERRAFORM_DIR" apply -auto-approve -input=false
+    print_info "Terraform Directory: $TERRAFORM_DIR"
+
+    cd "$TERRAFORM_DIR"
+
+    # UNCOMMENT WHEN YOU WANT TO USE A terraform.tfvars FILE INSTEAD OF ENVIRONMENT VARIABLES
+    # Create terraform.tfvars file with the required variables
+    # printf "aws_region=\"${AWS_REGION}\"\
+    # \naws_access_key_id=\"${AWS_ACCESS_KEY_ID}\"\
+    # \naws_secret_access_key=\"${AWS_SECRET_ACCESS_KEY}\"\
+    # \naws_session_token=\"${AWS_SESSION_TOKEN}\"" > terraform.tfvars
+
+    # Export Terraform variables as environment variables
+    export TF_VAR_aws_region="${AWS_REGION}"
+    export TF_VAR_aws_access_key_id="${AWS_ACCESS_KEY_ID}"
+    export TF_VAR_aws_secret_access_key="${AWS_SECRET_ACCESS_KEY}"
+    export TF_VAR_aws_session_token="${AWS_SESSION_TOKEN}"
+
+    # Initialize Terraform
+    print_info "Initializing Terraform..."
+    terraform init
+
+    # Plan Terraform
+    print_info "Running Terraform plan..."
+    terraform plan -out=tfplan > tfplan.out
+    
+    # Apply Terraform
+    print_info "Applying Terraform plan..."
+    terraform apply tfplan 
+    rm tfplan
+    print_info "Infrastructure deployed successfully!"
+
+    print_info "Creating the Terraform visualization..."
+    terraform graph | dot -Tpng > ../docs/images/terraform-visualization.png
+    print_info "Terraform visualization created at: ../docs/images/terraform-visualization.png"
 
     # Export the KMS key ARN from Terraform output for the CSFLE demo
     export AWS_KMS_KEY_ARN=$(terraform -chdir="$TERRAFORM_DIR" output -raw kms_key_arn)
     print_info "AWS_KMS_KEY_ARN=${AWS_KMS_KEY_ARN}"
+
+    cd ..
 fi
 
 # Build the argument list for the demo script
