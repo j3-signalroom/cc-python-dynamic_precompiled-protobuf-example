@@ -389,7 +389,6 @@ into a local `.venv`. No manual `pip install` is needed.
 | `boto3` | 1.38.0 | AWS KMS client for CSFLE DEK unwrapping |
 | `cachetools` | 7.0.5 | In-process caching utilities |
 | `confluent-kafka[schemaregistry,protobuf]` | 2.13.2 | Producer, Consumer, AdminClient, Schema Registry, Protobuf SerDes (required for `--mode full` and `--demo csfle`) |
-
 | `dotenv` | 0.9.9 | dotenv compatibility shim |
 | `googleapis-common-protos` | 1.56.1 | Common proto definitions (well-known types) |
 | `httpx` | 0.28.1 | Async HTTP client |
