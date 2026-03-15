@@ -5,6 +5,9 @@ The format is base on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), 
 
 
 ## [0.04.00.000] - 2026-03-14
+### Added
+- Issue [`#44`](https://github.com/j3-signalroom/cc-python-dynamic_static-protobuf-example/issues/44)
+
 ### Changed
 - Issue [`#42`](https://github.com/j3-signalroom/cc-python-dynamic_static-protobuf-example/issues/42)
 
