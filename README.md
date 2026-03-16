@@ -1,5 +1,5 @@
 # Confluent Cloud Python Dynamic or Precompiled Protobuf Example
-A hands-on Python demonstration of the **Confluent Cloud Protobuf Schema Serializer & Deserializer**, covering every major concept from the official [Confluent Protobuf SerDes documentation](https://docs.confluent.io/cloud/current/sr/fundamentals/serdes-develop/serdes-protobuf.html).
+A hands-on Python example of the **Confluent Cloud Protobuf Schema Serializer & Deserializer**, covering every major concept from the official [Confluent Protobuf SerDes documentation](https://docs.confluent.io/cloud/current/sr/fundamentals/serdes-develop/serdes-protobuf.html).
 
 The project talks to a Confluent Cloud Schema Registry over the SR REST API and, when run in `full` mode, produces and consumes messages on a Kafka cluster via `confluent-kafka`. It supports two Protobuf modes:
 
@@ -31,7 +31,7 @@ Both modes satisfy the `ProtoSchema` protocol and are interchangeable in the Ser
         + [1.8.6 `CustomProtobufDeserializer` (`custom_protobuf_serdes.py`)](#186-kafkaprotobufdeserializer-custom_protobuf_serdespy)
         + [1.8.7 `kafka_helpers.py`](#187-kafka_helperspy)
         + [1.8.8 `utilities.py`](#188-utilitiespy)
-        + [1.8.9 `examples.py`](#189-demospy)
+        + [1.8.9 `examples.py`](#189-examplespy)
     + [1.9 Logging](#19-logging)
     + [1.10 Wire format](#110-wire-format)
         - [1.10.1 Why a message index?](#1101-why-a-message-index)
@@ -73,7 +73,7 @@ cc-python-dynamic_precompiled-protobuf-examples/
 │   ├── compiled_protobuf_helpers.py # CompiledProtoMessage, compile_protos(), load_compiled_message() — protoc stubs
 │   ├── custom_protobuf_serdes.py    # CustomProtobufSerializer & CustomProtobufDeserializer
 │   ├── kafka_helpers.py             # ensure_topics(), kafka_produce(), kafka_consume_one()
-│   ├── examples.py                  # All ten demo functions (example_basic … example_no_auto_register)
+│   ├── examples.py                  # All ten example functions (example_basic … example_no_auto_register)
 │   ├── main.py                      # Thin entry point — wires config, SR client, and example dispatch
 │   ├── schemas                      # Proto3 schema definitions (used by --use-protoc)
 │   │   ├── MyRecord.proto           # Basic schema with import
@@ -249,7 +249,7 @@ flowchart TB
     end
 
     %% ── Examples ───────────────────────────────────────────────────────────
-    subgraph DEMOS["Example Sections  (examples.py)"]
+    subgraph EXAMPLES["Example Sections  (examples.py)"]
         direction LR
         D1["Example 1 · Basic\ntestproto-{run_id}"]
         D2["Example 2 · Delete Protection\nreferencedby → correct order"]
@@ -294,15 +294,15 @@ flowchart TB
     CLI --> COMPILED
     CLI --> SERDES
     CLI --> KAFKA_H
-    CLI --> DEMOS
+    CLI --> EXAMPLES
 
     SCHEMA --> SERDES
     COMPILED --> SERDES
     PROTO_IF --> SERDES
     SRC --> SERDES
-    SRC --> DEMOS
-    SERDES --> DEMOS
-    KAFKA_H --> DEMOS
+    SRC --> EXAMPLES
+    SERDES --> EXAMPLES
+    KAFKA_H --> EXAMPLES
 
     CLI_DESC -->|"provisions"| AWS_KMS
 
@@ -313,14 +313,14 @@ flowchart TB
     classDef cloud    fill:#0a74da,color:#fff,stroke:#0a74da
     classDef core     fill:#1a6b3c,color:#fff,stroke:#1a6b3c
     classDef helper   fill:#6b4226,color:#fff,stroke:#6b4226
-    classDef demo     fill:#5a3472,color:#fff,stroke:#5a3472
+    classDef examples fill:#5a3472,color:#fff,stroke:#5a3472
     classDef wire     fill:#b85c00,color:#fff,stroke:#b85c00
     classDef boot     fill:#2b4a6b,color:#fff,stroke:#2b4a6b
 
     class CC_SR,CC_KAFKA cloud
     class SRC,SERDES core
     class KAFKA_H,SCHEMA,COMPILED helper
-    class DEMOS,D1,D2,D3,D4,D5,D6,D7,D8,D9,D10 demo
+    class EXAMPLES,D1,D2,D3,D4,D5,D6,D7,D8,D9,D10 examples
     class WIRE,ENC,DEC wire
     class Boot,UTIL,CONST boot
     classDef csfle    fill:#8b1a1a,color:#fff,stroke:#8b1a1a
@@ -732,7 +732,7 @@ consumed from Kafka.
 
 #### **2.1.2 Example 2 — Reference-Deletion Protection (`--example delete`)**
 
-Demonstrates that Schema Registry rejects deletion of a schema that is
+Example of the Schema Registry rejecting deletion of a schema that is
 referenced by another. Calls `referenced_by()` to show the dependency graph,
 attempts to delete the leaf subject (expects a `RuntimeError`), then shows the
 correct order: delete the referencing subject first, then the referenced one.
@@ -796,7 +796,7 @@ subject name strategies.
 
 #### **2.1.9 Example 9 — Client-Side Field Level Encryption (`--example csfle`)**
 
-Demonstrates Confluent-native CSFLE using the **`confluent-kafka`** library's
+Example of Confluent-native CSFLE using the **`confluent-kafka`** library's
 `ProtobufSerializer` / `ProtobufDeserializer` with the `FieldEncryptionExecutor`
 rule engine and `AwsKmsDriver`. Encryption/decryption is handled transparently
 by the Confluent serializer/deserializer.
@@ -823,7 +823,7 @@ env vars, `~/.aws/credentials`, IAM role, or AWS SSO via `run-example.sh`).
 
 #### **2.1.10 Example 10 — Manual Schema Registration (`--example no-auto-register`)**
 
-Demonstrates the `auto_register=False` serializer mode, where schemas must be
+Example of the `auto_register=False` serializer mode, where schemas must be
 pre-registered before any produce calls. The example walks through three steps:
 
 1. **Step 1** — Manually registers an `Invoice` schema under `invoices-{run_id}-value`
@@ -876,7 +876,7 @@ AWS_CALLER_ARN=$(aws sts get-caller-identity --query "Arn" --output text)
 
 # Create the KMS key
 KMS_KEY_ID=$(aws kms create-key \
-    --description "KEK (Key Encryption Key) for Confluent CSFLE demo" \
+    --description "KEK (Key Encryption Key) for Confluent CSFLE example" \
     --tags TagKey=Purpose,TagValue=confluent-csfle-kek \
     --region us-east-1 \
     --query "KeyMetadata.KeyId" \
